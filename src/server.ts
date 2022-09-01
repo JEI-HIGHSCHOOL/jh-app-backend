@@ -4,9 +4,10 @@ import IndexRoute from '@routes/index.route';
 import UsersRoute from '@routes/users.route';
 import validateEnv from '@utils/validateEnv';
 import MusicRoute from './routes/music.route';
+import PushRoute from './routes/push.route';
 
 validateEnv();
 
-const app = new App([new IndexRoute(), new UsersRoute(), new AuthRoute(), new MusicRoute()]);
+const app = new App([new IndexRoute(), new UsersRoute(), new AuthRoute(), new MusicRoute(), new PushRoute()]);
 
 app.listen();

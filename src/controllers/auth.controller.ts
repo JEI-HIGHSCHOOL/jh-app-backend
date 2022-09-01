@@ -33,11 +33,8 @@ class AuthController {
 
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const userData: User = req.user;
-      const logOutUserData: User = await this.authService.logout(userData);
-
       res.setHeader('Set-Cookie', ['Authorization=; Max-age=0']);
-      ResponseWrapper(req, res, { data: logOutUserData, message: 'logout' })
+      ResponseWrapper(req, res, { message: '성공적으로 로그아웃 되었습니다' })
     } catch (error) {
       next(error);
     }

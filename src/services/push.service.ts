@@ -40,7 +40,7 @@ class DeviceService {
       publisher: req.user._id
     })
     await noticeDB.save()
-    await pushAlarm('재능고등학교', title);
+    await pushAlarm('새로운 알림이 도착하였습니다', title);
     noticeCache.flushAll()
     return null;
   }

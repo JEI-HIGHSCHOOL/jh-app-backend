@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import pushService from "@services/push.service";
 import ResponseWrapper from "@/utils/ResponseWarppar";
+import { RequestWithUser } from "@/interfaces/auth.interface";
 
 class UsersController {
   public pushService = new pushService();
@@ -23,7 +24,7 @@ class UsersController {
     }
   };
 
-  public publishNotice = async (req: Request, res: Response, next: NextFunction) => {
+  public publishNotice = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       const noticeData = await this.pushService.publishNotice(req);
       ResponseWrapper(req, res, { message: "성공적으로 공지를 추가했습니다", data: noticeData });

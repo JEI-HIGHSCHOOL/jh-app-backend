@@ -1,4 +1,5 @@
 import { NoticeAddDto, NoticeDto, PushDto } from "@/dtos/push.dto";
+import { RequestWithUser } from "@/interfaces/auth.interface";
 import deviceModel from "@/models/devices.model";
 import noticeModel from "@/models/notice";
 import userModel from "@/models/users.model";
@@ -31,14 +32,15 @@ class DeviceService {
     return null;
   }
 
-  public async publishNotice(req: Request): Promise<any> {
+  public async publishNotice(req: RequestWithUser): Promise<any> {
     const { title, description } = req.body as NoticeAddDto;
     const noticeDB = new noticeModel({
       title,
       content: description,
-      publisher: "1231231"
+      publisher: req.user.id
     })
     await noticeDB.save()
+    await pushAlarm('공지', title);
     noticeCache.flushAll()
     return null;
   }

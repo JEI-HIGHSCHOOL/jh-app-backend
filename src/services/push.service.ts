@@ -37,7 +37,7 @@ class DeviceService {
     const noticeDB = new noticeModel({
       title,
       content: description,
-      publisher: req.user.id
+      publisher: req.user._id
     })
     await noticeDB.save()
     await pushAlarm('재능고등학교', title);
@@ -48,11 +48,11 @@ class DeviceService {
   public async getNotice(): Promise<any> {
     const noticeCaches = noticeCache.has("notice");
     if (!noticeCaches) {
-      const noticesDB = await noticeModel.find();
+      const noticesDB = await noticeModel.find({},  null, {sort: {published_date: -1}}).limit(20);
       const notices = [];
       for await (const notice of noticesDB) {
         const publisher = await userModel.findOne(
-          { id: notice.publisher },
+          { _id: notice.publisher },
           { name: 1, id: 1 }
         );
         notices.push({

@@ -29,8 +29,8 @@ class DeviceService {
   }
 
   public async addNotice(req: Request): Promise<any> {
-    const { title, description, url } = req.body as NoticeDto;
-    await pushAlarm(title, description, {"url": url});
+    const { title, description, url, target } = req.body as NoticeDto;
+    await pushAlarm(title, description, {"url": url}, target);
     return null;
   }
 

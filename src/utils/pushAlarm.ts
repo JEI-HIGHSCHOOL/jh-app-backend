@@ -7,10 +7,14 @@ const expo = new Expo({ accessToken: process.env.EXPO_ACCESS_TOKEN });
 export const pushAlarm = async (
   title: string,
   content: string,
-  data?: {}
+  data?: {},
+  target?: string[]
 ): Promise<boolean> => {
   try {
-    const devices = await deviceModel.find({ pushPermission: true });
+    let devices = await deviceModel.find({ pushPermission: true });
+    if (target) {
+      devices = await deviceModel.find({ pushPermission: true, deviceId: {"$in": target} });
+    }
     const messages = [];
     for await (const device of devices) {
       messages.push({

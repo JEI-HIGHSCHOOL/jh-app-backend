@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsArray, IsOptional, IsString } from 'class-validator';
 
 export class PushDto {
   @IsString()
@@ -17,6 +17,9 @@ export class NoticeDto {
   @IsString()
   @IsOptional()
   public url: string;
+
+  @IsArray()
+  public target: string[];
 }
 
 export class NoticeAddDto {

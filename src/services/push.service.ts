@@ -1,4 +1,5 @@
 import { NoticeAddDto, NoticeDto, PushDto } from "@/dtos/push.dto";
+import { HttpException } from "@/exceptions/HttpException";
 import { RequestWithUser } from "@/interfaces/auth.interface";
 import deviceModel from "@/models/devices.model";
 import noticeModel from "@/models/notice";
@@ -6,6 +7,7 @@ import userModel from "@/models/users.model";
 import { noticeCache } from "@/utils/cache";
 import { pushAlarm } from "@/utils/pushAlarm";
 import { Request } from "express";
+import { isValidObjectId } from "mongoose";
 
 class DeviceService {
   public device = deviceModel;
@@ -28,7 +30,7 @@ class DeviceService {
 
   public async addNotice(req: Request): Promise<any> {
     const { title, description, url } = req.body as NoticeDto;
-    await pushAlarm(title, description);
+    await pushAlarm(title, description, {"url": url});
     return null;
   }
 
@@ -37,18 +39,20 @@ class DeviceService {
     const noticeDB = new noticeModel({
       title,
       content: description,
-      publisher: req.user._id
-    })
-    await noticeDB.save()
-    await pushAlarm('새로운 알림이 도착하였습니다', title);
-    noticeCache.flushAll()
+      publisher: req.user._id,
+    });
+    const notice = await noticeDB.save();
+    await pushAlarm("새로운 알림 등록", title, {"url": `notice/${notice._id}`});
+    noticeCache.flushAll();
     return null;
   }
 
   public async getNotice(): Promise<any> {
     const noticeCaches = noticeCache.has("notice");
     if (!noticeCaches) {
-      const noticesDB = await noticeModel.find({},  null, {sort: {published_date: -1}}).limit(20);
+      const noticesDB = await noticeModel
+        .find({}, null, { sort: { published_date: -1 } })
+        .limit(20);
       const notices = [];
       for await (const notice of noticesDB) {
         const publisher = await userModel.findOne(
@@ -65,10 +69,37 @@ class DeviceService {
               },
         });
       }
-      noticeCache.set("notice", notices)
-      return notices
+      noticeCache.set("notice", notices);
+      return notices;
     } else {
-      return noticeCache.get("notice")
+      return noticeCache.get("notice");
+    }
+  }
+
+  public async getNoticeById(req: Request): Promise<any> {
+    const { noticeId } = req.params;
+    if(!isValidObjectId(noticeId)) throw new HttpException(404, "찾을 수 없는 알림 입니다");
+    const noticeCaches = noticeCache.has("notice" + req.params.noticeId);
+    if (!noticeCaches) {
+      const noticesDB = await noticeModel.findOne({ _id: noticeId });
+      if(!noticesDB) throw new HttpException(404, "찾을 수 없는 알림 입니다");
+      const publisher = await userModel.findOne(
+        { _id: noticesDB.publisher },
+        { name: 1, id: 1 }
+      );
+      const notice = {
+        ...noticesDB.toJSON(),
+        publisher: publisher
+          ? publisher
+          : {
+              id: noticesDB.publisher,
+              name: "알 수 없음",
+            },
+      };
+      noticeCache.set("notice" + req.params.noticeId, notice);
+      return notice;
+    } else {
+      return noticeCache.get("notice" + req.params.noticeId);
     }
   }
 }

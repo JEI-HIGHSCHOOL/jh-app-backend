@@ -41,6 +41,15 @@ class UsersController {
       next(error);
     }
   };
+
+  public getNoticeById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const noticeData = await this.pushService.getNoticeById(req);
+      ResponseWrapper(req, res, { data: noticeData });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default UsersController;

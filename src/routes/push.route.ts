@@ -17,9 +17,10 @@ class PushRoute implements Routes {
 
   private initializeRoutes() {
     this.router.post(`${this.path}/device`, validationMiddleware(PushDto, 'body'), this.pushController.device)
-    this.router.post(`${this.path}/notice`, authMiddleware, validationMiddleware(NoticeDto, 'body'), this.pushController.addNotice)
+    this.router.post(`${this.path}/alert`, authMiddleware, validationMiddleware(NoticeDto, 'body'), this.pushController.addNotice)
     this.router.post(`${this.path}/noticeadd`, authMiddleware, validationMiddleware(NoticeAddDto, 'body'), this.pushController.publishNotice)
     this.router.get(`${this.path}/notice`, this.pushController.getNotice)
+    this.router.get(`${this.path}/notice/:noticeId`, this.pushController.getNoticeById)
   }
 }
 

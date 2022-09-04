@@ -35,14 +35,14 @@ class DeviceService {
   }
 
   public async publishNotice(req: RequestWithUser): Promise<any> {
-    const { title, description } = req.body as NoticeAddDto;
+    const { title, description, usePush } = req.body as NoticeAddDto;
     const noticeDB = new noticeModel({
       title,
       content: description,
       publisher: req.user._id,
     });
     const notice = await noticeDB.save();
-    await pushAlarm("새로운 알림 등록", title, {"url": `notice/${notice._id}`});
+    if(usePush) await pushAlarm("새로운 알림 등록", title, {"url": `notice/${notice._id}`});
     noticeCache.flushAll();
     return null;
   }

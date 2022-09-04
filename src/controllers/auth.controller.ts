@@ -31,6 +31,19 @@ class AuthController {
     }
   };
 
+  public getMe = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+    try {
+      ResponseWrapper(req, res, { data: {
+        name: req.user.name,
+        flags: req.user.flags,
+        id: req.user.id,
+        _id: req.user._id
+      } })
+    } catch (error) {
+      next(error);
+    }
+  };
+
   public logOut = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       res.setHeader('Set-Cookie', ['Authorization=; Max-age=0']);

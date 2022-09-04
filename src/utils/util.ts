@@ -1,3 +1,5 @@
+import { UserFlags } from "@/interfaces/users.interface";
+
 /**
  * @method isEmpty
  * @param {String | Number | Object} value
@@ -27,3 +29,11 @@ export const getDate = (date: Date) => {
   else getDate = Number(date.getDate());
   return date.getFullYear() + getMonth.toString() + getDate.toString()
 };
+
+export function checkUserFlag(base: number, required: number | keyof typeof UserFlags):boolean {
+	return checkFlag(base, typeof required === 'number' ? required : UserFlags[required])
+}
+
+function checkFlag(base: number, required: number) {
+	return (base & required) === required
+}

@@ -1,42 +1,42 @@
-import { hash } from 'bcrypt';
-import { CreateUserDto } from '@dtos/users.dto';
+import { compare, hash } from 'bcrypt';
+import { CangePasswordDto, CreateUserDto, UpdateRoleDto } from '@dtos/users.dto';
 import { HttpException } from '@exceptions/HttpException';
-import { User } from '@interfaces/users.interface';
 import userModel from '@models/users.model';
-import { isEmpty } from '@utils/util';
+import { RequestWithUser } from '@/interfaces/auth.interface';
+import { UserFlags } from '@/interfaces/users.interface';
 
 class UserService {
   public users = userModel;
 
-  public async createUser(userData: CreateUserDto): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
-
-    const findUser: User = await this.users.findOne({ id: userData.id });
-    if (findUser) throw new HttpException(409, `이미 사용중인 아이디 입니다`);
-
-    const hashedPassword = await hash(userData.password, 10);
-    const createUserData: User = await this.users.create({ ...userData, password: hashedPassword });
-
-    return createUserData;
+  public async changePaswword(req: RequestWithUser): Promise<any> {
+    const { password, changePassword } = req.body as CangePasswordDto
+    const isPasswordMatching: boolean = await compare(password, req.user.password);
+    if (!isPasswordMatching) throw new HttpException(409, "기존 비밀번호가 올바르지 않습니다");
+    const hashedPassword = await hash(changePassword, 10);
+    await this.users.updateOne({_id: req.user._id}, {$set: {password: hashedPassword}})
+    return true
   }
 
-  public async updateUser(userId: string, userData: CreateUserDto): Promise<User> {
-    if (isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
+  public async getUsers(req: RequestWithUser): Promise<any> {
+    const users = await this.users.find({}, {name: 1, _id: 1, id: 1, flags: 1})
+    return users;
+  }
 
-    if (userData.id) {
-      const findUser: User = await this.users.findOne({ id: userData.id });
-      if (findUser && findUser._id != userId) throw new HttpException(409, `이미 사용중인 아이디 입니다`);
+  public async updateRole(req: RequestWithUser): Promise<any> {
+    const { role } = req.body as UpdateRoleDto
+    const { userId } = req.params
+    if(userId === req.user._id.toString()) throw new HttpException(404, "자신은 수정이 불가능합니다");
+    const user = await this.users.findOne({_id: userId})
+    if(!user) throw new HttpException(404, "찾을 수 없는 유저입니다");
+    const getFlag = () => {
+      if(role === "teacher") {
+        return UserFlags.teacher
+      } else if(role === "admin") {
+        return UserFlags.teacher + UserFlags.admin
+      }
     }
-
-    if (userData.password) {
-      const hashedPassword = await hash(userData.password, 10);
-      userData = { ...userData, password: hashedPassword };
-    }
-
-    const updateUserById: User = await this.users.findByIdAndUpdate(userId, { userData });
-    if (!updateUserById) throw new HttpException(409, "유저 정보가 없습니다");
-
-    return updateUserById;
+    await user.update({$set: {flags: getFlag()}})
+    return null;
   }
 }
 

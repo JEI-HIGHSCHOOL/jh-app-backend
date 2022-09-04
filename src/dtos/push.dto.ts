@@ -1,4 +1,4 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class PushDto {
   @IsString()
@@ -28,4 +28,6 @@ export class NoticeAddDto {
 
   @IsString()
   public description: string;
+  @IsBoolean()
+  public usePush: boolean
 }

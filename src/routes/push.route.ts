@@ -21,6 +21,8 @@ class PushRoute implements Routes {
     this.router.post(`${this.path}/noticeadd`, authTeacherMiddleware, validationMiddleware(NoticeAddDto, 'body'), this.pushController.publishNotice)
     this.router.get(`${this.path}/notice`, this.pushController.getNotice)
     this.router.get(`${this.path}/notice/:noticeId`, this.pushController.getNoticeById)
+    this.router.patch(`${this.path}/notice/:noticeId`, authTeacherMiddleware, validationMiddleware(NoticeAddDto, 'body'), this.pushController.updateNoticeById)
+    this.router.delete(`${this.path}/notice/:noticeId`, authTeacherMiddleware, this.pushController.deleteNoticeById)
   }
 }
 

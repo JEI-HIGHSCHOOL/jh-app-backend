@@ -50,6 +50,24 @@ class UsersController {
       next(error);
     }
   };
+
+  public updateNoticeById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const noticeData = await this.pushService.editNoticeById(req);
+      ResponseWrapper(req, res, { data: noticeData });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public deleteNoticeById = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const noticeData = await this.pushService.deleteNoticeById(req);
+      ResponseWrapper(req, res, { data: noticeData });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default UsersController;

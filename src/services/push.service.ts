@@ -2,7 +2,7 @@ import { NoticeAddDto, NoticeDto, PushDto } from "@/dtos/push.dto";
 import { HttpException } from "@/exceptions/HttpException";
 import { RequestWithUser } from "@/interfaces/auth.interface";
 import deviceModel from "@/models/devices.model";
-import noticeModel from "@/models/notice";
+import noticeModel from "@/models/notice.model";
 import userModel from "@/models/users.model";
 import { noticeCache } from "@/utils/cache";
 import { pushAlarm } from "@/utils/pushAlarm";
@@ -101,6 +101,27 @@ class DeviceService {
     } else {
       return noticeCache.get("notice" + req.params.noticeId);
     }
+  }
+
+  public async editNoticeById(req: Request): Promise<any> {
+    const { noticeId } = req.params;
+    const { title, description } = req.body as NoticeAddDto
+    if(!isValidObjectId(noticeId)) throw new HttpException(404, "찾을 수 없는 알림 입니다");
+    const noticesDB = await noticeModel.findOne({ _id: noticeId });
+    if (!noticesDB) throw new HttpException(404, "찾을 수 없는 알림 입니다");
+    await noticesDB.updateOne({$set: {title, content: description}})
+    noticeCache.del("notice" + noticeId)
+    return true
+  }
+
+  public async deleteNoticeById(req: Request): Promise<any> {
+    const { noticeId } = req.params;
+    if(!isValidObjectId(noticeId)) throw new HttpException(404, "찾을 수 없는 알림 입니다");
+    const noticesDB = await noticeModel.findOne({ _id: noticeId });
+    if (!noticesDB) throw new HttpException(404, "찾을 수 없는 알림 입니다");
+    await noticesDB.deleteOne()
+    noticeCache.flushAll();
+    return true
   }
 }
 

@@ -17,7 +17,7 @@ class MusicService {
       deviceId,
       song,
     });
-    await importData([[dayjs().locale('ko').format("YYYY. MM. DD A HH:mm:ss"), song, "위 내용을 숙지 하였으며 준수하도록 하겠습니다", deviceId]]);
+    await importData([[dayjs().locale('ko').format("YYYY. M. D A HH:mm:ss"), song, "위 내용을 숙지 하였으며 준수하도록 하겠습니다", deviceId]]);
     await musicDB.save();
     const musicList = await getData();
     return musicList.data.values.length;

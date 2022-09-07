@@ -5,6 +5,7 @@ import { Music } from "@/dtos/music.dto";
 import musicModel from "@/models/music.model";
 import { getDate } from "@/utils/util";
 import dayjs from "dayjs";
+import { HttpException } from "@/exceptions/HttpException";
 require('dayjs/locale/ko')
 
 class MusicService {
@@ -13,6 +14,7 @@ class MusicService {
 
   public async addMusic(req: Request): Promise<any> {
     const { deviceId, song } = req.body as Music;
+    throw new HttpException(400, "오류로 인한 임시 비활성화 상태입니다")
     const musicDB = new this.musics({
       deviceId,
       song,

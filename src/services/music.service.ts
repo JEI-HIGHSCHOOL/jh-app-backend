@@ -14,7 +14,6 @@ class MusicService {
 
   public async addMusic(req: Request): Promise<any> {
     const { deviceId, song } = req.body as Music;
-    throw new HttpException(400, "오류로 인한 임시 비활성화 상태입니다")
     const musicDB = new this.musics({
       deviceId,
       song,

@@ -1,5 +1,4 @@
 import { Router } from "express";
-import IndexController from "@controllers/index.controller";
 import { Routes } from "@interfaces/routes.interface";
 import validationMiddleware from "@/middlewares/validation.middleware";
 import { Music } from "@/dtos/music.dto";

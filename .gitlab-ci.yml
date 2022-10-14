@@ -21,8 +21,10 @@ build:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
     # environment file
     - echo $ENV_FILE
+    - echo $GOOGLE_API_KEY
     # File is outside of build context, so make local copy.
     - cp $ENV_FILE .env.production.local
+    - cp $GOOGLE_API_KEY google_api_key.json
     - docker build -t $DOKCER_IMAGE_URL .
     - docker push $DOKCER_IMAGE_URL
   only:

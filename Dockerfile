@@ -1,9 +1,7 @@
 # Common build stage
 FROM node:16.14.2
 
-RUN apk add tzdata  \
-    && cp /usr/share/zoneinfo/Asia/Seoul /etc/localtime  \
-    && echo "Asia/Seoul" > /etc/timezone
+ENV TZ=Asia/Seoul
 
 COPY . ./app
 

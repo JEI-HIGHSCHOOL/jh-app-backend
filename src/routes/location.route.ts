@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
-import LocationController from '@/controllers/location.controller';
+import LocationController from '@/controllers/bus.controller';
 
-class LocationRoute implements Routes {
-  public path = '/location';
+class BusRoute implements Routes {
+  public path = '/bus';
   public router = Router();
   public locationController = new LocationController();
 
@@ -12,8 +12,8 @@ class LocationRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}`, this.locationController.updateLocation);
+    this.router.post(`${this.path}/location`, this.locationController.updateLocation);
   }
 }
 
-export default LocationRoute;
+export default BusRoute;

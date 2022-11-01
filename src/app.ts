@@ -15,6 +15,7 @@ import errorMiddleware from "@middlewares/error.middleware";
 import { logger, stream } from "@utils/logger";
 import { Server as SoketServer } from "socket.io";
 import http from "http";
+import SokeioService from "./services/soketio.service";
 
 class App {
   public app: express.Application;

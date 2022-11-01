@@ -7,7 +7,7 @@ class BannerController {
   public bannerService = new BannerService();
   public getBanners = async(req: Request, res: Response, next: NextFunction) => {
     try {
-      const getBanner = await this.bannerService.getBanners(req)
+      const getBanner = await this.bannerService.getBanners()
       ResponseWrapper(req, res, {data: getBanner})
     } catch (error) {
       next(error);
@@ -25,7 +25,7 @@ class BannerController {
 
   public getAdminBanners = async(req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const getBannersAdmin = await this.bannerService.getBannersAdmin(req)
+      const getBannersAdmin = await this.bannerService.getBannersAdmin()
       ResponseWrapper(req, res, {data: getBannersAdmin})
     } catch (error) {
       next(error);

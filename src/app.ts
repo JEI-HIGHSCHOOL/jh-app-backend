@@ -16,6 +16,7 @@ import { logger, stream } from "@utils/logger";
 import { Server as SoketServer } from "socket.io";
 import http from "http";
 import SokeioService from "./services/soketio.service";
+import SocketioService from "./services/soketio.service";
 
 class App {
   public app: express.Application;
@@ -39,6 +40,7 @@ class App {
     const server = http.createServer(this.app);
     const io = new SoketServer(server);
     this.io = io;
+    SocketioService(io)
     server.listen(this.port, () => {
       logger.info(`🚀 App listening on the port ${this.port}`);
     });

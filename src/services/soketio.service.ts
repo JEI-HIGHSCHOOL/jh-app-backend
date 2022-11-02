@@ -1,17 +1,15 @@
-import { Server } from "socket.io";
+import { busCache } from "@/utils/cache";
+import { Server, Socket } from "socket.io";
 
-class SokeioService {
-  io: Server;
-  constructor(io: Server) {
-    this.io = io;
-    this.locationUpdate()
-  }
+const SocketioService = (io: Server) => {
+  io.on("connection", (socket: Socket) => {
+    socket.on("getBusLocation", (data: any) => {
+      socket.emit("getBusLocation", {
+        namgu: busCache.get("namgu"),
+        seogu: busCache.get("seogu"),
+      });
+    });
+  });
+};
 
-  public async locationUpdate() {
-    this.io.on("connection", (socket) => {
-        socket.emit("connected", "connected");
-    })
-  }
-}
-
-export default SokeioService;
+export default SocketioService;

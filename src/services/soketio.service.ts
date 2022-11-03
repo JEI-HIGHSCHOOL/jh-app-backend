@@ -3,7 +3,7 @@ import { Server, Socket } from "socket.io";
 
 const SocketioService = (io: Server) => {
   io.on("connection", (socket: Socket) => {
-    socket.on("getBusLocation", (data: any) => {
+    socket.on("getBusLocation", () => {
       socket.emit("getBusLocation", {
         namgu: busCache.get("namgu"),
         seogu: busCache.get("seogu"),

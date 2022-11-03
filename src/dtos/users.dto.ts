@@ -10,6 +10,14 @@ export class CreateUserDto {
   public name: string;
 }
 
+export class TokenRefreshDto {
+  @IsString({ message: "아이디를 입력해주세요" })
+  public _id: string;
+
+  @IsString({ message: "토큰정보를 입력해주세요" })
+  public token: string;
+}
+
 export class UserLoginDto {
   @IsString({ message: "아이디를 입력해주세요" })
   public id: string;

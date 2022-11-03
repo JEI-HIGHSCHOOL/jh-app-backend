@@ -84,5 +84,33 @@ const authAdminMiddleware = async (req: RequestWithUser, res: Response, next: Ne
   }
 };
 
+
+const authBusMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
+  try {
+    const Authorization = req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null);
+
+    if (Authorization) {
+      const secretKey: string = SECRET_KEY;
+      const verificationResponse = (await verify(Authorization, secretKey)) as DataStoredInToken;
+      const userId = verificationResponse._id;
+      const findUser = await userModel.findById(userId);
+
+      if (findUser) {
+        req.user = findUser;
+        if(!checkUserFlag(findUser.flags, "busdriver")) {
+          next(new HttpException(401, '해당 기능을 사용할 권한이 없습니다'));  
+        }
+        next();
+      } else {
+        next(new HttpException(401, '올바르지 않은 유저 토큰입니다'));
+      }
+    } else {
+      next(new HttpException(404, '유저 토큰정보가 없습니다'));
+    }
+  } catch (error) {
+    next(new HttpException(401, '올바르지 않은 유저 토큰입니다'));
+  }
+};
+
 export default authMiddleware;
-export { authTeacherMiddleware, authAdminMiddleware }
+export { authTeacherMiddleware, authAdminMiddleware, authBusMiddleware }

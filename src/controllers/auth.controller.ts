@@ -52,10 +52,11 @@ class AuthController {
   public refreshToken = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
       const userData: TokenRefreshDto = req.body;
-      const { refresh_token, access_token } = await this.authService.refreshToken(userData);
+      const { refresh_token, access_token, user } = await this.authService.refreshToken(userData);
       ResponseWrapper(req, res, { data: {
         refresh_token,
-        access_token
+        access_token,
+        user
       } })
     } catch (error) {
       next(error);

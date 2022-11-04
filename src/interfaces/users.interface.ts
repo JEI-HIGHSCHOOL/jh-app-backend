@@ -2,8 +2,9 @@ export interface User {
   _id: string;
   id: string;
   name: string;
-  password: string;
+  password?: string;
   flags: number;
+  toJSON?(): User;
 }
 
 export interface Device {

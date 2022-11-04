@@ -7,3 +7,5 @@ export const noticeCache = new nodeCache({
 export const bannerCache = new nodeCache({
     stdTTL: 100
 })
+
+export const busCache = new nodeCache()

@@ -1,10 +1,3 @@
-import userModel from "@models/users.model";
-import { Request } from "express";
-import { importData, getData } from "@utils/googleSheetAPI";
-import { Music } from "@/dtos/music.dto";
-import musicModel from "@/models/music.model";
-import { getDate } from "@/utils/util";
-import dayjs from "dayjs";
 import deviceModel from "@/models/devices.model";
 import bannerModel from "@/models/banner.model";
 import noticeModel from "@/models/notice.model";
@@ -49,7 +42,7 @@ class BannerService {
     bannerCache.flushAll()
     return true
   }
-  public async getBanners(req: Request): Promise<any> {
+  public async getBanners(): Promise<any> {
     if(bannerCache.has("banner")) {
       return bannerCache.get("banner")
     } else {
@@ -59,7 +52,7 @@ class BannerService {
     }
   }
 
-  public async getBannersAdmin(req: Request): Promise<any> {
+  public async getBannersAdmin(): Promise<any> {
     const banners = await this.banners.find()
     return banners
   }

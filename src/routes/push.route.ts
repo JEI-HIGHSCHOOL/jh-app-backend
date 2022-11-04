@@ -1,10 +1,9 @@
 import { Router } from 'express';
 import PushController from '@controllers/push.controller';
-import { CreateUserDto } from '@dtos/users.dto';
 import { Routes } from '@interfaces/routes.interface';
 import validationMiddleware from '@middlewares/validation.middleware';
 import { NoticeAddDto, NoticeDto, PushDto } from '@/dtos/push.dto';
-import authMiddleware, { authTeacherMiddleware } from '@/middlewares/auth.middleware';
+import { authTeacherMiddleware } from '@/middlewares/auth.middleware';
 
 class PushRoute implements Routes {
   public path = '/push';

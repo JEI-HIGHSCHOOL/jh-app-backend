@@ -31,9 +31,12 @@ class AuthService {
     return createUserData;
   }
 
-  public async login(
-    userData: CreateUserDto
-  ): Promise<{ cookie: string; findUser: User, refresh_token: string, access_token: string }> {
+  public async login(userData: CreateUserDto): Promise<{
+    cookie: string;
+    findUser: User;
+    refresh_token: string;
+    access_token: string;
+  }> {
     if (isEmpty(userData))
       throw new HttpException(400, "찾을 수 없는 유저입니다");
 
@@ -52,27 +55,54 @@ class AuthService {
     const refreshTokenData = this.createToken(findUser, "refresh", "30d");
     const cookie = this.createCookie(tokenData);
 
-    return { cookie, findUser, refresh_token: refreshTokenData.token, access_token: tokenData.token };
+    return {
+      cookie,
+      findUser: {
+        _id: findUser._id,
+        id: findUser.id,
+        name: findUser.name,
+        flags: findUser.flags,
+      },
+      refresh_token: refreshTokenData.token,
+      access_token: tokenData.token,
+    };
   }
 
   public async refreshToken(
     userData: TokenRefreshDto
-  ): Promise<{ refresh_token: string; access_token: string }> {
+  ): Promise<{ refresh_token: string; access_token: string, user: User }> {
     if (isEmpty(userData))
       throw new HttpException(400, "찾을 수 없는 유저입니다");
     const secretKey: string = SECRET_KEY;
-    const verificationResponse = verify(userData.token, secretKey) as DataStoredInToken;
-    if(verificationResponse.tokenType !== "refresh") throw new HttpException(400, "잘못된 토큰입니다");
+    const verificationResponse = verify(
+      userData.token,
+      secretKey
+    ) as DataStoredInToken;
+    if (verificationResponse.tokenType !== "refresh")
+      throw new HttpException(400, "잘못된 토큰입니다");
     const findUser: User = await this.users.findById(verificationResponse._id);
     if (!findUser) throw new HttpException(409, "유저를 찾을 수 없습니다");
 
     const access_token = this.createToken(findUser, "access");
     const refresh_token = this.createToken(findUser, "refresh", "30d");
 
-    return { access_token: access_token.token, refresh_token: refresh_token.token };
+    return {
+      access_token: access_token.token,
+      refresh_token: refresh_token.token,
+      user: {
+        _id: findUser._id,
+        id: findUser.id,
+        name: findUser.name,
+        flags: findUser.flags,
+      },
+    };
   }
 
-  public createToken(user: User, tokenType: TokenType, expiresIn: string | number = "2d"): TokenData {
+  public createToken(
+    user: User,
+    tokenType: TokenType,
+    expiresIn: string | number = "2d"
+  ): TokenData {
     const dataStoredInToken: DataStoredInToken = { _id: user._id, tokenType };
     const secretKey: string = SECRET_KEY;
 

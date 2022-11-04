@@ -4,7 +4,7 @@ import IndexRoute from '@routes/index.route';
 import UsersRoute from '@routes/users.route';
 import validateEnv from '@utils/validateEnv';
 import BannersRoute from './routes/banner.route';
-import LocationRoute from './routes/location.route';
+import LocationRoute from './routes/bus.route';
 import MusicRoute from './routes/music.route';
 import PushRoute from './routes/push.route';
 import WebRoute from './routes/web.route';

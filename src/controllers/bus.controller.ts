@@ -18,6 +18,32 @@ class BusController {
       next(error);
     }
   };
+
+  public runBus = async (
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const startRunBusData = await this.busService.startRunBus(req);
+      ResponseWrapper(req, res, { data: startRunBusData });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public stopBus = async (
+    req: RequestWithUser,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const updateLocationData = await this.busService.stopRunBus(req);
+      ResponseWrapper(req, res, { data: updateLocationData });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default BusController;

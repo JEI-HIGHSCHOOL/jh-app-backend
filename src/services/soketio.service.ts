@@ -4,10 +4,17 @@ import { Server, Socket } from "socket.io";
 const SocketioService = (io: Server) => {
   io.on("connection", (socket: Socket) => {
     socket.on("getBusLocation", () => {
-      socket.emit("getBusLocation", {
-        namgu: busCache.get("namgu"),
-        seogu: busCache.get("seogu"),
-      });
+      if (!busCache.has("namgu") && !busCache.has("seogu")) {
+        socket.emit("getBusLocation", {
+          isBus: "none"
+        })
+      } else {
+        socket.emit("getBusLocation", {
+          isBus: "yes",
+          namgu: busCache.get("namgu"),
+          seogu: busCache.get("seogu"),
+        });
+      }
     });
   });
 };

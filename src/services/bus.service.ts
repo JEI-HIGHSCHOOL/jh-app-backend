@@ -15,6 +15,23 @@ class BusService {
     });
     return true;
   }
+
+  public async startRunBus(req: RequestWithUser): Promise<any> {
+    busCache.set(req.body.bus, req.body.location)
+    req.io.emit("updateBusLocation", {
+        location: req.body.location,
+        bus: req.body.bus,
+    });
+    return true;
+  }
+
+  public async stopRunBus(req: RequestWithUser): Promise<any> {
+    busCache.del(req.body.bus)
+    req.io.emit("stopBus", {
+        bus: req.body.bus,
+    });
+    return true;
+  }
 }
 
 export default BusService;

@@ -35,6 +35,6 @@ export class CangePasswordDto {
 }
 
 export class UpdateRoleDto {
-  @IsIn(["teacher", "admin"], { message: "올바르지 않은 권한 입니다" })
+  @IsIn(["teacher", "admin", "busdriver"], { message: "올바르지 않은 권한 입니다" })
   public role: string;
 }

@@ -1,6 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
-import { CreateUserDto } from '@dtos/users.dto';
-import { User } from '@interfaces/users.interface';
+import { NextFunction, Response } from 'express';
 import userService from '@services/users.service';
 import { RequestWithUser } from '@/interfaces/auth.interface';
 import ResponseWrapper from '@/utils/ResponseWarppar';
@@ -20,7 +18,7 @@ class UsersController {
 
   public getUsers = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     try {
-      const usersData = await this.userService.getUsers(req);
+      const usersData = await this.userService.getUsers();
 
       ResponseWrapper(req, res, { data: usersData })
     } catch (error) {

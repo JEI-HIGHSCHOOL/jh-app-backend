@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { Routes } from '@interfaces/routes.interface';
 import LocationController from '@/controllers/bus.controller';
-import { authAdminMiddleware } from '@/middlewares/auth.middleware';
+import { authBusMiddleware } from '@/middlewares/auth.middleware';
 import validationMiddleware from '@/middlewares/validation.middleware';
 import { StartBusDto, StopBusDto } from '@/dtos/bus.dto';
 
@@ -15,9 +15,9 @@ class BusRoute implements Routes {
   }
 
   private initializeRoutes() {
-    this.router.post(`${this.path}/location`, authAdminMiddleware, this.locationController.updateLocation);
-    this.router.post(`${this.path}/start`, authAdminMiddleware, validationMiddleware(StartBusDto, "body"),this.locationController.runBus);
-    this.router.post(`${this.path}/stop`, authAdminMiddleware, validationMiddleware(StopBusDto, "body"),this.locationController.stopBus);
+    this.router.post(`${this.path}/location`, authBusMiddleware, this.locationController.updateLocation);
+    this.router.post(`${this.path}/start`, authBusMiddleware, validationMiddleware(StartBusDto, "body"),this.locationController.runBus);
+    this.router.post(`${this.path}/stop`, authBusMiddleware, validationMiddleware(StopBusDto, "body"),this.locationController.stopBus);
   }
 }
 

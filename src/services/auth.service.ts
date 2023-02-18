@@ -1,7 +1,12 @@
 import { hash, compare } from "bcrypt";
 import { sign, verify } from "jsonwebtoken";
 import { SECRET_KEY, DOMAIN } from "@config";
-import { CreateStudentUserDto, CreateUserDto, StudentUserDto, TokenRefreshDto } from "@dtos/users.dto";
+import {
+  CreateStudentUserDto,
+  CreateUserDto,
+  StudentUserDto,
+  TokenRefreshDto,
+} from "@dtos/users.dto";
 import { HttpException } from "@exceptions/HttpException";
 import {
   DataStoredInToken,
@@ -33,11 +38,15 @@ class AuthService {
     return createUserData;
   }
 
-  public async studentSignup(userData: CreateStudentUserDto): Promise<StudentUser> {
-    if(isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
+  public async studentSignup(
+    userData: CreateStudentUserDto
+  ): Promise<StudentUser> {
+    if (isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
 
-    const findUser: StudentUser = await this.studentUsers.findOne({ phone: userData.phone });
-    if(findUser) throw new HttpException(409, `이미 가입된 번호입니다`);
+    const findUser: StudentUser = await this.studentUsers.findOne({
+      phone: userData.phone,
+    });
+    if (findUser) throw new HttpException(409, `이미 가입된 번호입니다`);
 
     const password = await hash(userData.password, 15);
     const createUserData: StudentUser = await this.studentUsers.create({
@@ -55,19 +64,26 @@ class AuthService {
     refresh_token: string;
     cookie: string;
   }> {
-    if(isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
+    if (isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
 
-    const findUser: StudentUser = await this.studentUsers.findOne({ phone: userData.phone });
-    if(!findUser) throw new HttpException(409, `가입되지 않은 번호입니다`);
+    const findUser: StudentUser = await this.studentUsers.findOne({
+      phone: userData.phone,
+    });
+    if (!findUser) throw new HttpException(409, `가입되지 않은 번호입니다`);
 
-    if(!findUser.isVerified) throw new HttpException(409, "승인 대기중 입니다");
+    if (!findUser.isVerified)
+      throw new HttpException(409, "승인 대기중 입니다");
 
-    const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
+    const isPasswordMatching: boolean = await compare(
+      userData.password,
+      findUser.password
+    );
 
-    if(!isPasswordMatching) throw new HttpException(409, "비밀번호가 올바르지 않습니다");
-    const tokenData = this.createToken(findUser, "access", "3d");
-    const refreshTokenData = this.createToken(findUser, "refresh", "30d");
-    const cookie = this.createCookie(tokenData)
+    if (!isPasswordMatching)
+      throw new HttpException(409, "비밀번호가 올바르지 않습니다");
+    const tokenData = this.createToken(findUser, "access", 345600000);
+    const refreshTokenData = this.createToken(findUser, "refresh", 2592000000);
+    const cookie = this.createCookie(tokenData);
 
     return {
       user: {
@@ -106,8 +122,8 @@ class AuthService {
     if (!isPasswordMatching)
       throw new HttpException(409, "아이디 또는 비밀번호가 올바르지 않습니다");
 
-    const tokenData = this.createToken(findUser, "access", "3d");
-    const refreshTokenData = this.createToken(findUser, "refresh", "30d");
+    const tokenData = this.createToken(findUser, "access", 259200000);
+    const refreshTokenData = this.createToken(findUser, "refresh", 2592000000);
     const cookie = this.createCookie(tokenData);
 
     return {
@@ -125,7 +141,7 @@ class AuthService {
 
   public async refreshToken(
     userData: TokenRefreshDto
-  ): Promise<{ refresh_token: string; access_token: string, user: User }> {
+  ): Promise<{ refresh_token: string; access_token: string; user: User }> {
     if (isEmpty(userData))
       throw new HttpException(400, "찾을 수 없는 유저입니다");
     const secretKey: string = SECRET_KEY;
@@ -138,8 +154,8 @@ class AuthService {
     const findUser: User = await this.users.findById(verificationResponse._id);
     if (!findUser) throw new HttpException(409, "유저를 찾을 수 없습니다");
 
-    const access_token = this.createToken(findUser, "access");
-    const refresh_token = this.createToken(findUser, "refresh", "30d");
+    const access_token = this.createToken(findUser, "access", 172800000);
+    const refresh_token = this.createToken(findUser, "refresh", 2592000000);
 
     return {
       access_token: access_token.token,
@@ -156,7 +172,7 @@ class AuthService {
   public createToken(
     user: User | StudentUser,
     tokenType: TokenType,
-    expiresIn: string | number = "2d"
+    expiresIn: number
   ): TokenData {
     const dataStoredInToken: DataStoredInToken = { _id: user._id, tokenType };
     const secretKey: string = SECRET_KEY;
@@ -168,7 +184,8 @@ class AuthService {
   }
 
   public createCookie(tokenData: TokenData): string {
-    return `Authorization=${tokenData.token}; HttpOnly; Domain=${DOMAIN}; Path=/; Max-Age=${tokenData.expiresIn};`;
+    const msToSec = tokenData.expiresIn / 1000;
+    return `Authorization=${tokenData.token}; HttpOnly; Domain=${DOMAIN}; Path=/; Max-Age=${msToSec};`;
   }
 }
 

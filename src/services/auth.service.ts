@@ -1,19 +1,21 @@
 import { hash, compare } from "bcrypt";
 import { sign, verify } from "jsonwebtoken";
 import { SECRET_KEY, DOMAIN } from "@config";
-import { CreateUserDto, TokenRefreshDto } from "@dtos/users.dto";
+import { CreateStudentUserDto, CreateUserDto, StudentUserDto, TokenRefreshDto } from "@dtos/users.dto";
 import { HttpException } from "@exceptions/HttpException";
 import {
   DataStoredInToken,
   TokenData,
   TokenType,
 } from "@interfaces/auth.interface";
-import { User } from "@interfaces/users.interface";
+import { StudentUser, User } from "@interfaces/users.interface";
 import userModel from "@models/users.model";
 import { isEmpty } from "@utils/util";
+import studentUserModel from "@/models/studentUsers.model";
 
 class AuthService {
   public users = userModel;
+  public studentUsers = studentUserModel;
 
   public async signup(userData: CreateUserDto): Promise<User> {
     if (isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
@@ -29,6 +31,59 @@ class AuthService {
     });
 
     return createUserData;
+  }
+
+  public async studentSignup(userData: CreateStudentUserDto): Promise<StudentUser> {
+    if(isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
+
+    const findUser: StudentUser = await this.studentUsers.findOne({ phone: userData.phone });
+    if(findUser) throw new HttpException(409, `이미 가입된 번호입니다`);
+
+    const password = await hash(userData.password, 15);
+    const createUserData: StudentUser = await this.studentUsers.create({
+      ...userData,
+      password,
+      isVerified: false,
+    });
+
+    return createUserData;
+  }
+
+  public async studentLogin(userData: StudentUserDto): Promise<{
+    user: StudentUser;
+    access_token: string;
+    refresh_token: string;
+    cookie: string;
+  }> {
+    if(isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
+
+    const findUser: StudentUser = await this.studentUsers.findOne({ phone: userData.phone });
+    if(!findUser) throw new HttpException(409, `가입되지 않은 번호입니다`);
+
+    if(!findUser.isVerified) throw new HttpException(409, "승인 대기중 입니다");
+
+    const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
+
+    if(!isPasswordMatching) throw new HttpException(409, "비밀번호가 올바르지 않습니다");
+    const tokenData = this.createToken(findUser, "access", "3d");
+    const refreshTokenData = this.createToken(findUser, "refresh", "30d");
+    const cookie = this.createCookie(tokenData)
+
+    return {
+      user: {
+        _id: findUser._id,
+        phone: findUser.phone,
+        name: findUser.name,
+        department: findUser.department,
+        grade: findUser.grade,
+        class: findUser.class,
+        number: findUser.number,
+        isVerified: findUser.isVerified,
+      },
+      cookie,
+      access_token: tokenData.token,
+      refresh_token: refreshTokenData.token,
+    };
   }
 
   public async login(userData: CreateUserDto): Promise<{
@@ -99,7 +154,7 @@ class AuthService {
   }
 
   public createToken(
-    user: User,
+    user: User | StudentUser,
     tokenType: TokenType,
     expiresIn: string | number = "2d"
   ): TokenData {

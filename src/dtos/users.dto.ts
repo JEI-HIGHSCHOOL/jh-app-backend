@@ -10,6 +10,35 @@ export class CreateUserDto {
   public name: string;
 }
 
+export class StudentUserDto {
+  @IsString({ message: "전화번호를 입력해주세요" })
+  phone: string;
+  @IsString({ message: "비밀번호를 입력해주세요" })
+  password: string;
+}
+
+export class CreateStudentUserDto {
+  @IsString({ message: "전화번호를 입력해주세요" })
+  public phone: string;
+
+  @IsString({ message: "비밀번호를 입력해주세요" })
+  public password: string;
+  @IsString({ message: "이름을 입력해주세요" })
+  public name: string;
+
+  @IsString({ message: "과를 선택해주세요" })
+  public department: string;
+
+  @IsString({ message: "학년을 입력해주세요" })
+  public grade: string;
+
+  @IsString({ message: "반을 입력해주세요" })
+  public class: string;
+
+  @IsString({ message: "번호를 입력해주세요" })
+  public number: string;
+}
+
 export class TokenRefreshDto {
   @IsString({ message: "아이디를 입력해주세요" })
   public _id: string;

@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import {
   CreateStudentUserDto,
   CreateUserDto,
+  StudentTokenRefreshDto,
   StudentUserDto,
   TokenRefreshDto,
 } from "@dtos/users.dto";
@@ -76,12 +77,35 @@ class AuthController {
       const { user, refresh_token, access_token, cookie } =
         await this.authService.studentLogin(userData);
 
-      res.setHeader("Set-Cookie", [cookie]);
+      res.setHeader("Set-Cookie", cookie);
       ResponseWrapper(req, res, {
         data: {
           user,
           refresh_token,
           access_token,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public studentRefreshToken = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const userData = req.cookies;
+      const { refresh_token, access_token, cookie, user } =
+        await this.authService.studentRefrshToken(userData);
+
+      res.setHeader("Set-Cookie", cookie);
+      ResponseWrapper(req, res, {
+        data: {
+          refresh_token,
+          access_token,
+          user
         },
       });
     } catch (error) {

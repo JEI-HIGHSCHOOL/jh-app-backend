@@ -4,6 +4,7 @@ import { SECRET_KEY, DOMAIN } from "@config";
 import {
   CreateStudentUserDto,
   CreateUserDto,
+  StudentTokenRefreshDto,
   StudentUserDto,
   TokenRefreshDto,
 } from "@dtos/users.dto";
@@ -62,7 +63,7 @@ class AuthService {
     user: StudentUser;
     access_token: string;
     refresh_token: string;
-    cookie: string;
+    cookie: string[];
   }> {
     if (isEmpty(userData)) throw new HttpException(400, "유저 정보가 없습니다");
 
@@ -84,6 +85,10 @@ class AuthService {
     const tokenData = this.createToken(findUser, "access", 345600000);
     const refreshTokenData = this.createToken(findUser, "refresh", 2592000000);
     const cookie = this.createCookie(tokenData);
+    const refreshTokenCookie = this.createCookie(
+      refreshTokenData,
+      "refresh_token"
+    );
 
     return {
       user: {
@@ -96,7 +101,7 @@ class AuthService {
         number: findUser.number,
         isVerified: findUser.isVerified,
       },
-      cookie,
+      cookie: [cookie, refreshTokenCookie],
       access_token: tokenData.token,
       refresh_token: refreshTokenData.token,
     };
@@ -136,6 +141,47 @@ class AuthService {
       },
       refresh_token: refreshTokenData.token,
       access_token: tokenData.token,
+    };
+  }
+
+  public async studentRefrshToken(userData: StudentTokenRefreshDto): Promise<{
+    refresh_token: string;
+    access_token: string;
+    cookie: string[];
+    user: StudentUser;
+  }> {
+    if (isEmpty(userData))
+      throw new HttpException(400, "찾을 수 없는 유저입니다");
+    const verificationResponse = verify(
+      userData.refresh_token,
+      SECRET_KEY
+    ) as DataStoredInToken;
+    if (verificationResponse.tokenType !== "refresh")
+      throw new HttpException(400, "잘못된 토큰입니다");
+    const findUser: StudentUser = await this.studentUsers.findById(verificationResponse._id, {
+      password: 0,
+    });
+    if (!findUser) throw new HttpException(409, "유저를 찾을 수 없습니다");
+    const access_token = this.createToken(findUser, "access", 345600000);
+    const refresh_token = this.createToken(findUser, "refresh", 2592000000);
+
+    return {
+      access_token: access_token.token,
+      refresh_token: refresh_token.token,
+      cookie: [
+        this.createCookie(access_token),
+        this.createCookie(refresh_token, "refresh_token"),
+      ],
+      user: {
+        _id: findUser._id,
+        phone: findUser.phone,
+        name: findUser.name,
+        department: findUser.department,
+        grade: findUser.grade,
+        class: findUser.class,
+        number: findUser.number,
+        isVerified: findUser.isVerified,
+      },
     };
   }
 
@@ -183,9 +229,9 @@ class AuthService {
     };
   }
 
-  public createCookie(tokenData: TokenData): string {
+  public createCookie(tokenData: TokenData, name = "Authorization"): string {
     const msToSec = tokenData.expiresIn / 1000;
-    return `Authorization=${tokenData.token}; HttpOnly; Domain=${DOMAIN}; Path=/; Max-Age=${msToSec};`;
+    return `${name}=${tokenData.token}; HttpOnly; Domain=${DOMAIN}; Path=/; Max-Age=${msToSec};`;
   }
 }
 

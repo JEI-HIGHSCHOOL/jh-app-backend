@@ -47,6 +47,12 @@ export class TokenRefreshDto {
   public token: string;
 }
 
+export class StudentTokenRefreshDto {
+
+  @IsString({ message: "토큰정보를 입력해주세요" })
+  public refresh_token: string;
+}
+
 export class UserLoginDto {
   @IsString({ message: "아이디를 입력해주세요" })
   public id: string;

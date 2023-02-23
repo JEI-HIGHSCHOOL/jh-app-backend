@@ -37,3 +37,8 @@ export function checkUserFlag(base: number, required: number | keyof typeof User
 function checkFlag(base: number, required: number) {
 	return (base & required) === required
 }
+
+export enum BusList {
+  namgu = '남구',
+  seogu = '서구'
+}

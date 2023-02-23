@@ -19,6 +19,12 @@ export interface StudentUser {
   isVerified: boolean;
 }
 
+export interface StudentBusBoarding {
+  _id: string;
+  userId: string;
+  busId: string;
+  bordingTime: Date;
+}
 
 export interface Device {
   _id: string;

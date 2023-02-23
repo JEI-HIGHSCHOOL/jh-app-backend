@@ -45,13 +45,13 @@ const studentAuthMiddleware = async (req: RequestWithStudentUser, res: Response,
         req.user = findUser;
         next();
       } else {
-        next(new HttpException(401, '올바르지 않은 유저 토큰입니다'));
+        next(new HttpException(401, '로그인후 이용해주세요'));
       }
     } else {
-      next(new HttpException(404, '유저 토큰정보가 없습니다'));
+      next(new HttpException(404, '로그인후 이용해주세요'));
     }
   } catch (error) {
-    next(new HttpException(401, '올바르지 않은 유저 토큰입니다'));
+    next(new HttpException(401, '로그인후 이용해주세요'));
   }
 };
 

@@ -14,6 +14,10 @@ class WebRoute implements Routes {
 
   private initializeRoutes() {
     this.router.get(`${this.path}/analytics`, authTeacherMiddleware, this.webController.getAnalytics)
+    this.router.get(`${this.path}/students`, authTeacherMiddleware, this.webController.getStudents)
+    this.router.get(`${this.path}/students/approve`, authTeacherMiddleware, this.webController.getStudentsApprove)
+    this.router.post(`${this.path}/students/approve/:id`, authTeacherMiddleware, this.webController.getStudentsApproveById)
+    this.router.get(`${this.path}/students/borading/xlsx/:id`, authTeacherMiddleware, this.webController.getStudentsBoradingXlsx)
   }
 }
 

@@ -231,7 +231,7 @@ class AuthService {
 
   public createCookie(tokenData: TokenData, name = "Authorization"): string {
     const msToSec = tokenData.expiresIn / 1000;
-    return `${name}=${tokenData.token}; HttpOnly; Domain=${DOMAIN}; Path=/; Max-Age=${msToSec};`;
+    return `${name}=${tokenData.token}; Domain=${DOMAIN}; Path=/; Max-Age=${msToSec};`;
   }
 }
 

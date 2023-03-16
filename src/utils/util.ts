@@ -70,7 +70,7 @@ export const Buslists = [
     key: "buphong",
   },
   {
-    lable: "연수노선",
+    label: "연수노선",
     value: "yeonsu",
     key: "yeonsu",
   },

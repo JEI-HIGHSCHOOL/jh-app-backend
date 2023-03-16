@@ -19,6 +19,7 @@ class BusRoute implements Routes {
     this.router.post(`${this.path}/start`, authBusMiddleware, validationMiddleware(StartBusDto, "body"), this.busController.runBus);
     this.router.post(`${this.path}/stop`, authBusMiddleware, validationMiddleware(StopBusDto, "body"), this.busController.stopBus);
     this.router.post(`${this.path}/qr`, studentAuthMiddleware, this.busController.addBoradingRecord)
+    this.router.get(`${this.path}/routers`, this.busController.getRouters)
   }
 }
 

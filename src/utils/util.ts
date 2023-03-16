@@ -9,11 +9,15 @@ import { UserFlags } from "@/interfaces/users.interface";
 export const isEmpty = (value: string | number | object): boolean => {
   if (value === null) {
     return true;
-  } else if (typeof value !== 'number' && value === '') {
+  } else if (typeof value !== "number" && value === "") {
     return true;
-  } else if (typeof value === 'undefined' || value === undefined) {
+  } else if (typeof value === "undefined" || value === undefined) {
     return true;
-  } else if (value !== null && typeof value === 'object' && !Object.keys(value).length) {
+  } else if (
+    value !== null &&
+    typeof value === "object" &&
+    !Object.keys(value).length
+  ) {
     return true;
   } else {
     return false;
@@ -27,18 +31,47 @@ export const getDate = (date: Date) => {
   else getMonth = Number(date.getMonth() + 1);
   if (date.getDate() < 10) getDate = "0" + Number(date.getDate());
   else getDate = Number(date.getDate());
-  return date.getFullYear() + getMonth.toString() + getDate.toString()
+  return date.getFullYear() + getMonth.toString() + getDate.toString();
 };
 
-export function checkUserFlag(base: number, required: number | keyof typeof UserFlags):boolean {
-	return checkFlag(base, typeof required === 'number' ? required : UserFlags[required])
+export function checkUserFlag(
+  base: number,
+  required: number | keyof typeof UserFlags
+): boolean {
+  return checkFlag(
+    base,
+    typeof required === "number" ? required : UserFlags[required]
+  );
 }
 
 function checkFlag(base: number, required: number) {
-	return (base & required) === required
+  return (base & required) === required;
 }
 
 export enum BusList {
-  namgu = '남구',
-  seogu = '서구'
+  namgu = "남구",
+  seogu = "서구",
 }
+
+export const Buslists = [
+  {
+    label: "남구노선",
+    value: "namgu",
+    key: "namgu",
+  },
+  {
+    label: "서구노선",
+    value: "seogu",
+    key: "seogu",
+  },
+  {
+    label: "부평노선",
+    value: "buphong",
+    key: "buphong",
+  },
+  {
+    lable: "연수노선",
+    value: "yeonsu",
+    key: "yeonsu",
+  },
+];

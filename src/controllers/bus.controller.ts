@@ -4,7 +4,8 @@ import {
 } from "@/interfaces/auth.interface";
 import BusService from "@/services/bus.service";
 import ResponseWrapper from "@/utils/ResponseWarppar";
-import { NextFunction, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import { Buslists } from "@utils/util";
 
 class BusController {
   public busService = new BusService();
@@ -17,6 +18,19 @@ class BusController {
     try {
       const updateLocationData = await this.busService.locationUpdate(req);
       ResponseWrapper(req, res, { data: updateLocationData });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  public getRouters = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    try {
+      const getRoutersData = Buslists;
+      ResponseWrapper(req, res, { data: getRoutersData });
     } catch (error) {
       next(error);
     }
@@ -57,7 +71,10 @@ class BusController {
       const addBoradingRecordData = await this.busService.addBoradingRecord(
         req
       );
-      ResponseWrapper(req, res, { data: addBoradingRecordData, message: "탑승이 확인되었습니다" });
+      ResponseWrapper(req, res, {
+        data: addBoradingRecordData,
+        message: "탑승이 확인되었습니다",
+      });
     } catch (error) {
       next(error);
     }

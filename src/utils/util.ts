@@ -51,6 +51,8 @@ function checkFlag(base: number, required: number) {
 export enum BusList {
   namgu = "남구",
   seogu = "서구",
+  buphong = "부평",
+  yeonsu = "연수",
 }
 
 export const Buslists = [

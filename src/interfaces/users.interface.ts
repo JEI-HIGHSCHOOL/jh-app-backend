@@ -12,12 +12,15 @@ export interface StudentUser {
   phone: string;
   name: string;
   password?: string;
+  route: string;
   department: string;
   grade: string;
   class: string;
   number: string;
   isVerified: boolean;
 }
+
+export type BusType = "seogu" | "namgu" | "yeonsu" | "buphong";
 
 export interface StudentBusBoarding {
   _id: string;

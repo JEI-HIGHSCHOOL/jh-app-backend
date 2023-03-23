@@ -37,6 +37,8 @@ export class CreateStudentUserDto {
 
   @IsString({ message: "번호를 입력해주세요" })
   public number: string;
+  @IsString({ message: "노선을 선택해주세요" })
+  public route: string;
 }
 
 export class TokenRefreshDto {

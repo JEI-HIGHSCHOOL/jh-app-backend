@@ -55,6 +55,17 @@ class WebService {
         { password: 0 }
       );
       return students;
+    } else if (req.query.route) {
+      const students = await this.students.find(
+        {
+          route: {
+            $regex: req.query.route as string,
+            $options: "i",
+          },
+        },
+        { password: 0 }
+      );
+      return students;
     } else {
       const students = await this.students.find({}, { password: 0 });
       return students;
@@ -126,7 +137,7 @@ class WebService {
     worksheet.columns = [
       { header: "이름", key: "name", width: 20 },
       { header: "연락처", key: "phone", width: 20 },
-      { header: "학과", key: 'department', width: 20 },
+      { header: "학과", key: "department", width: 20 },
       { header: "학년", key: "grade", width: 5 },
       { header: "반", key: "class", width: 5 },
       { header: "번호", key: "classNumber", width: 5 },
@@ -134,7 +145,11 @@ class WebService {
       { header: "탑승버스", key: "bus", width: 10 },
     ];
     ["A", "B", "C", "D", "E", "F", "G", "H"].map((cell) => {
-      worksheet.getCell(`${cell}1`).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'cce6ff' } };
+      worksheet.getCell(`${cell}1`).fill = {
+        type: "pattern",
+        pattern: "solid",
+        fgColor: { argb: "cce6ff" },
+      };
     });
     worksheet.insertRows(2, dataSet);
     const xlsxBuffer = (await workbook.xlsx.writeBuffer()) as Buffer;

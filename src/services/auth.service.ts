@@ -100,6 +100,7 @@ class AuthService {
         class: findUser.class,
         number: findUser.number,
         isVerified: findUser.isVerified,
+        route: findUser.route,
       },
       cookie: [cookie, refreshTokenCookie],
       access_token: tokenData.token,
@@ -181,6 +182,7 @@ class AuthService {
         class: findUser.class,
         number: findUser.number,
         isVerified: findUser.isVerified,
+        route: findUser.route,
       },
     };
   }

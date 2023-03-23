@@ -31,6 +31,10 @@ const studentUserSchema: Schema = new Schema({
     type: String,
     required: true,
   },
+  route: {
+    type: String,
+    required: true,
+  },
   isVerified: {
     type: Boolean,
     required: true,

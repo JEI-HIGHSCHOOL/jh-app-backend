@@ -57,7 +57,7 @@ export enum BusList {
 
 export const Buslists = [
   {
-    label: "남구노선",
+    label: "남동구노선",
     value: "namgu",
     key: "namgu",
   },

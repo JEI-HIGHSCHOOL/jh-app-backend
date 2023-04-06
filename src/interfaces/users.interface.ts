@@ -43,3 +43,7 @@ export enum UserFlags {
   teacher = 1 << 3,
   admin = 1 << 5,
 }
+
+export interface StudentWithBusBoarding extends StudentUser {
+  boarding: StudentBusBoarding
+}

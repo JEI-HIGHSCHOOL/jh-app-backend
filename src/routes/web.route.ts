@@ -21,6 +21,7 @@ class WebRoute implements Routes {
     this.router.get(`${this.path}/students/borading/xlsx/:id`, authTeacherMiddleware, this.webController.getStudentsBoradingXlsx)
     this.router.post(`${this.path}/students/approve/:id`, authTeacherMiddleware, this.webController.getStudentsApproveById)
     this.router.delete(`${this.path}/students/:id`, authTeacherMiddleware, this.webController.deleteStudent)
+    this.router.put(`${this.path}/students/:id`, authTeacherMiddleware, this.webController.editStudent)
   }
 }
 

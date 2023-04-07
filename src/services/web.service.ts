@@ -39,9 +39,18 @@ class WebService {
   }
 
   public async deleteStudent(req: Request): Promise<any> {
-    const student = await this.students.findByIdAndDelete(req.params.id);    
+    const student = await this.students.findByIdAndDelete(req.params.id);
     if (!student) throw new HttpException(404, "해당 학생이 없습니다");
     await this.studentsBorading.deleteMany({ userId: student._id });
+    return student;
+  }
+
+  public async editStudent(req: Request): Promise<StudentUser> {
+    const student = await this.students.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
+    if (!student) throw new HttpException(404, "해당 학생이 없습니다");
     return student;
   }
 

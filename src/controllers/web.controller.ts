@@ -33,6 +33,15 @@ class WebController {
     }
   }
 
+  public editStudent = async(req: Request, res: Response, next: NextFunction) => {
+    try {
+      const students = await this.webService.editStudent(req)
+      ResponseWrapper(req, res, {data: students})
+    } catch (error) {
+      next(error);
+    }
+  }
+
   public getStudentsApprove = async(req: Request, res: Response, next: NextFunction) => {
     try {
       const students = await this.webService.getStudentsApprove(req)
